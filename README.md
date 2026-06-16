@@ -17,9 +17,8 @@ A simple Java console application for managing bank accounts and recording trans
 ## Project Structure
 
 ```
-Project1/
+AccountantApp/
 ├── README.md
-├── Project1.iml
 └── src/
     └── bank/
         ├── Assistant.java   # Application entry point and state management
@@ -35,13 +34,13 @@ All classes belong to the `bank` package.
 
 ### IntelliJ IDEA
 
-1. Open the `Project1` module.
+1. Open the `AccountantApp` module.
 2. Open `src/bank/Assistant.java`.
 3. Run the `main` method (green play button).
 
 ### Command Line
 
-From the `Project1` directory:
+From the `AccountantApp` directory:
 
 ```bash
 javac -d out src/bank/*.java
@@ -52,14 +51,15 @@ CSV files are created in the **working directory** where you run the program (us
 
 ## Commands
 
-| Command  | Syntax                                                 | Description                                                                                                            |
-|----------|--------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| Create   | `create <name>`                                        | Creates a new account. Name must be a single word (no spaces).                                                         |
-| Deposit  | `deposit <accountId> <amount>`                         | Adds money to an account and records the operation.                                                                    |
-| Withdraw | `withdraw <accountId> <amount>`                        | Removes money from an account and records the operation.                                                               |
-| Transfer | `transfer <firstAccountId> <secondAccountId> <amount>` | Removes money from the first account, adds them to the second, and records as two operations "withdraw" and "deposit". |
-| List     | `list`                                                 | Prints all accounts with id, name, and balance.                                                                        |
-| Exit     | `exit`                                                 | Saves data to CSV and closes the program.                                                                              |
+| Command    | Syntax                                                 | Description                                                                                                            |
+|------------|--------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Create     | `create <name>`                                        | Creates a new account. Name must be a single word (no spaces).                                                         |
+| Deposit    | `deposit <accountId> <amount>`                         | Adds money to an account and records the operation.                                                                    |
+| Withdraw   | `withdraw <accountId> <amount>`                        | Removes money from an account and records the operation.                                                               |
+| Transfer   | `transfer <firstAccountId> <secondAccountId> <amount>` | Removes money from the first account, adds them to the second, and records as two operations "withdraw" and "deposit". |
+| List       | `list`                                                 | Prints all accounts with id, name, and balance.                                                                        |
+| Operations | `operations'                                           | Prints history of all operations, with account id, type and amount                                                     |
+| Exit       | `exit`                                                 | Saves data to CSV and closes the program.                                                                              |
 
 ### Example Session
 
@@ -80,6 +80,11 @@ Balance 2: 50.0
 > list
 1: Alice - 25.0
 2: Bob - 50.0
+> operations
+1: 1 - deposit - 100
+2: 1 - withdraw - 25
+3: 1 - withdraw - 50
+4: 2 - deposit - 50
 > exit
 ```
 
@@ -89,11 +94,11 @@ The application uses two CSV files in the working directory.
 
 ### accounts.csv
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | int | Unique account identifier |
-| `name` | string | Account holder name |
-| `balance` | double | Current balance |
+| Column    | Type   | Description               |
+|-----------|--------|---------------------------|
+| `id`      | int    | Unique account identifier |
+| `name`    | string | Account holder name       |
+| `balance` | double | Current balance           |
 
 Example:
 
@@ -105,12 +110,12 @@ id,name,balance
 
 ### operations.csv
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | int | Unique operation identifier |
-| `accountId` | int | ID of the related account |
-| `type` | string | `deposit` or `withdraw` |
-| `amount` | double | Transaction amount |
+| Column      | Type   | Description                 |
+|-------------|--------|-----------------------------|
+| `id`        | int    | Unique operation identifier |
+| `accountId` | int    | ID of the related account   |
+| `type`      | string | `deposit` or `withdraw`     |
+| `amount`    | double | Transaction amount          |
 
 Example:
 
@@ -157,19 +162,19 @@ End
 
 Main application class. Holds in-memory state and coordinates loading, saving, and the command loop.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `accounts` | `List<Account>` | All bank accounts |
-| `operations` | `List<Operation>` | All recorded transactions |
-| `nextAccountId` | `int` | Next ID to assign to a new account |
-| `nextOperationId` | `int` | Next ID to assign to a new operation |
+| Field             | Type              | Description                          |
+|-------------------|-------------------|--------------------------------------|
+| `accounts`        | `List<Account>`   | All bank accounts                    |
+| `operations`      | `List<Operation>` | All recorded transactions            |
+| `nextAccountId`   | `int`             | Next ID to assign to a new account   |
+| `nextOperationId` | `int`             | Next ID to assign to a new operation |
 
-| Method | Description |
-|--------|-------------|
+| Method                | Description                                                                                  |
+|-----------------------|----------------------------------------------------------------------------------------------|
 | `main(String[] args)` | Entry point. Creates an `Assistant` instance, loads data, runs the command loop, then saves. |
-| `loadData()` | Loads accounts and operations from CSV. Updates ID counters. |
-| `saveData()` | Writes accounts and operations to CSV. |
-| `findAccount(int id)` | Returns the account with the given ID, or `null` if not found. |
+| `loadData()`          | Loads accounts and operations from CSV. Updates ID counters.                                 |
+| `saveData()`          | Writes accounts and operations to CSV.                                                       |
+| `findAccount(int id)` | Returns the account with the given ID, or `null` if not found.                               |
 
 
 ---
@@ -178,17 +183,17 @@ Main application class. Holds in-memory state and coordinates loading, saving, a
 
 Represents a single bank account.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `int` | Unique account ID |
-| `name` | `String` | Account holder name |
+| Field     | Type     | Description                   |
+|-----------|----------|-------------------------------|
+| `id`      | `int`    | Unique account ID             |
+| `name`    | `String` | Account holder name           |
 | `balance` | `double` | Current balance (default `0`) |
 
-| Method | Description |
-|--------|-------------|
+| Method                         | Description                       |
+|--------------------------------|-----------------------------------|
 | `Account(int id, String name)` | Constructor. Balance starts at 0. |
-| `deposit(double amount)` | Increases balance by `amount`. |
-| `withdraw(double amount)` | Decreases balance by `amount`. |
+| `deposit(double amount)`       | Increases balance by `amount`.    |
+| `withdraw(double amount)`      | Decreases balance by `amount`.    |
 
 ---
 
@@ -196,15 +201,15 @@ Represents a single bank account.
 
 Represents one financial transaction linked to an account.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `int` | Unique operation ID |
-| `accountId` | `int` | ID of the affected account |
-| `type` | `String` | `"deposit"` or `"withdraw"` |
-| `amount` | `double` | Transaction amount |
+| Field       | Type     | Description                 |
+|-------------|----------|-----------------------------|
+| `id`        | `int`    | Unique operation ID         |
+| `accountId` | `int`    | ID of the affected account  |
+| `type`      | `String` | `"deposit"` or `"withdraw"` |
+| `amount`    | `double` | Transaction amount          |
 
-| Method | Description |
-|--------|-------------|
+| Method                                                         | Description                     |
+|----------------------------------------------------------------|---------------------------------|
 | `Operation(int id, int accountId, String type, double amount)` | Creates a new operation record. |
 
 ---
@@ -213,17 +218,17 @@ Represents one financial transaction linked to an account.
 
 Handles reading and writing CSV files. All methods are static.
 
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `ACCOUNTS_FILE` | `"accounts.csv"` | Path to accounts file |
+| Constant          | Value              | Description             |
+|-------------------|--------------------|-------------------------|
+| `ACCOUNTS_FILE`   | `"accounts.csv"`   | Path to accounts file   |
 | `OPERATIONS_FILE` | `"operations.csv"` | Path to operations file |
 
-| Method | Description |
-|--------|-------------|
-| `saveAccounts(List<Account>)` | Overwrites `accounts.csv` with the current account list. |
-| `loadAccounts()` | Reads `accounts.csv`. Returns an empty list if the file is missing. |
-| `saveOperations(List<Operation>)` | Overwrites `operations.csv` with the current operation list. |
-| `loadOperations()` | Reads `operations.csv`. Returns an empty list if the file is missing. |
+| Method                            | Description                                                           |
+|-----------------------------------|-----------------------------------------------------------------------|
+| `saveAccounts(List<Account>)`     | Overwrites `accounts.csv` with the current account list.              |
+| `loadAccounts()`                  | Reads `accounts.csv`. Returns an empty list if the file is missing.   |
+| `saveOperations(List<Operation>)` | Overwrites `operations.csv` with the current operation list.          |
+| `loadOperations()`                | Reads `operations.csv`. Returns an empty list if the file is missing. |
 
 ---
 
@@ -231,8 +236,8 @@ Handles reading and writing CSV files. All methods are static.
 
 Parses user input and performs the requested action on the `Assistant` instance.
 
-| Method | Description |
-|--------|-------------|
+| Method                                      | Description                                                                       |
+|---------------------------------------------|-----------------------------------------------------------------------------------|
 | `manipulate(String command, Assistant app)` | Splits the command string and routes to create, list, deposit, or withdraw logic. |
 
 **Command handling details:**

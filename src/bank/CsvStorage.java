@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CsvStorage {
-    static final String ACCOUNTS_FILE = "AccountantApp/accounts.csv";
-    static final String OPERATIONS_FILE = "AccountantApp/operations.csv";
+    static final String ACCOUNTS_FILE = "accounts.csv";
+    static final String OPERATIONS_FILE = "operations.csv";
 
     public static void saveAccounts(List<Account> accounts) throws IOException {
         FileWriter writer = new FileWriter(ACCOUNTS_FILE);

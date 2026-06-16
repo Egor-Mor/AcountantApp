@@ -22,6 +22,12 @@ public class Tools {
             return;
         }
 
+        if  (parts[0].equals("operations")) {
+            for (Operation operation : app.operations) {
+                System.out.println(operation.id + ": " + operation.accountId + " - " + operation.type + " - " + operation.amount);
+            }
+        }
+
         if ((parts[0].equals("deposit") || parts[0].equals("withdraw")) && parts.length >= 3) {
             int accountId;
             double amount;

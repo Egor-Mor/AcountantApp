@@ -16,7 +16,7 @@ public class Assistant {
         app.loadData();
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("Commands: create, deposit, withdraw, list, exit");
+        System.out.println("Commands: create, deposit, withdraw, transfer, list, operations, exit");
 
         while (true) {
             System.out.print("> ");
