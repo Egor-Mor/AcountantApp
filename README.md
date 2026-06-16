@@ -52,13 +52,14 @@ CSV files are created in the **working directory** where you run the program (us
 
 ## Commands
 
-| Command | Syntax | Description |
-|---------|--------|-------------|
-| Create | `create <name>` | Creates a new account. Name must be a single word (no spaces). |
-| Deposit | `deposit <accountId> <amount>` | Adds money to an account and records the operation. |
-| Withdraw | `withdraw <accountId> <amount>` | Removes money from an account and records the operation. |
-| List | `list` | Prints all accounts with id, name, and balance. |
-| Exit | `exit` | Saves data to CSV and closes the program. |
+| Command  | Syntax                                                 | Description                                                                                                            |
+|----------|--------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Create   | `create <name>`                                        | Creates a new account. Name must be a single word (no spaces).                                                         |
+| Deposit  | `deposit <accountId> <amount>`                         | Adds money to an account and records the operation.                                                                    |
+| Withdraw | `withdraw <accountId> <amount>`                        | Removes money from an account and records the operation.                                                               |
+| Transfer | `transfer <firstAccountId> <secondAccountId> <amount>` | Removes money from the first account, adds them to the second, and records as two operations "withdraw" and "deposit". |
+| List     | `list`                                                 | Prints all accounts with id, name, and balance.                                                                        |
+| Exit     | `exit`                                                 | Saves data to CSV and closes the program.                                                                              |
 
 ### Example Session
 
@@ -70,8 +71,15 @@ Created account 1
 Done. Balance: 100.0
 > withdraw 1 25
 Done. Balance: 75.0
+> create Bob
+Created account 2
+> transfer 1 2 50
+Done.
+Balance 1: 25.0
+Balance 2: 50.0
 > list
-1: Alice - 75.0
+1: Alice - 25.0
+2: Bob - 50.0
 > exit
 ```
 

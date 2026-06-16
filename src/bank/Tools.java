@@ -59,6 +59,50 @@ public class Tools {
 
             System.out.println("Done. Balance: " + account.balance);
         }
+
+        if (parts[0].equals("transfer")) {
+            int firstAccountId;
+            int secondAccountId;
+            double amount;
+            try {
+                firstAccountId = Integer.parseInt(parts[1]);
+                secondAccountId = Integer.parseInt(parts[2]);
+                amount = parseAmount(parts[3]);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid account id or amount. Use dot or comma for decimals (e.g. 49.99 or 49,99).");
+                return;
+            }
+
+            if (amount <= 0) {
+                System.out.println("Amount must be positive.");
+                return;
+            }
+
+            Account account1 = app.findAccount(firstAccountId);
+            Account account2 = app.findAccount(secondAccountId);
+            if ((account1 == null)||(account2 == null)) {
+                System.out.println("Account not found.");
+                return;
+            }
+            account1.withdraw(amount);
+            account2.deposit(amount);
+
+            Operation operation = new Operation(
+                    app.nextOperationId++,
+                    firstAccountId,
+                    "withdraw",
+                    amount);
+            app.operations.add(operation);
+
+            operation = new Operation(
+                    app.nextOperationId++,
+                    secondAccountId,
+                    "deposit",
+                    amount);
+            app.operations.add(operation);
+
+            System.out.println("Done.\nBalance 1: " + account1.balance + "\nBalance 2: " + account2.balance);
+        }
     }
 
     static double parseAmount(String text) {
